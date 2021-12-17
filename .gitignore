@@ -1,0 +1,11 @@
+# Python / Backend
+*venv
+*images
+*data
+*.pyc
+
+
+
+
+# General
+*.env
