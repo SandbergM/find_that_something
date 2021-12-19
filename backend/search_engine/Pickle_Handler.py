@@ -15,6 +15,10 @@ class Pickle_Handler():
         with open(f'{self.file_path}', 'br') as pkl:
             return pickle.load(pkl)
 
-    def append_to_file(self, data):
-        with open(f'{self.file_path}', 'ab') as pkl:
-            pickle.dump(data, pkl)
+    def append_to_file(self, img_name, img_score):
+
+        pkl_data = self.load_from_file()
+        pkl_data[img_name] = img_score
+
+        with open(f'{self.file_path}', 'bw') as pkl:
+            pickle.dump(pkl_data, pkl)

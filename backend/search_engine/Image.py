@@ -17,8 +17,10 @@ class Image:
         self.origin = origin
 
     def save_to_file(self, folder_path):
-        img = cv2.imread(self.url)
-        cv2.imwrite(f'./{folder_path}/{uuid.uuid1()}.jpg', img)
+        img = self.read_image(self.url, self.origin)
+        img_name = f'{uuid.uuid1()}.jpg'
+        cv2.imwrite(f'./{folder_path}/{img_name}', img)
+        return img_name
 
     def __generate_difference_score(self, url, origin):
         img = self.read_image(url, origin)
@@ -30,8 +32,12 @@ class Image:
         return self.file_hash(self.__difference_score)
 
     def read_image(self, url: str, origin: str):
+
         if origin == 'base64':
             return self.__convert_base64_to_img(url)
+        
+        if origin == 'local_file':
+            return cv2.imread(url)
 
     def __gray_img(self, img):
         return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -46,8 +52,8 @@ class Image:
         difference_row = np.diff(row_res)
         difference_col = np.diff(col_res)
 
-        difference_row = difference_row > 0
-        difference_col = difference_col > 0
+        # difference_row = difference_row > 0
+        # difference_col = difference_col > 0
 
         return np.vstack((difference_row, difference_col)).flatten()
 
@@ -60,8 +66,7 @@ class Image:
     def get_difference_score(self):
 
         if self.__difference_score is None:
-            self.__difference_score = self.__generate_difference_score(
-                self.url, self.origin)
+            self.__difference_score = self.__generate_difference_score(self.url, self.origin)
 
         if self.__hash is None:
             self.__hash = self.__generate_hash()
